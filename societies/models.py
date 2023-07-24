@@ -14,7 +14,9 @@ class TimeStampMixin(models.Model):
 
 class Rut(TimeStampMixin):
     "Esta representa el Rut(Rol Único Tributario) para personas naturales(físicas) y jurídicas"
-    code = models.CharField(max_length=10, validators=[rut_validator], unique=True, db_index=True)
+    code = models.CharField(
+        max_length=10, validators=[rut_validator], unique=True, db_index=True
+    )
     name = models.CharField(max_length=200, null=False, blank=False)
 
     def __str__(self):
