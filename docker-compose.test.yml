@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: legalbot
+      POSTGRES_USER: conrado
+      POSTGRES_PASSWORD: legalbot
+    ports:
+      - "5432:5432"
+
+  django:
+    build: .
+    command: python -m pytest
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      POSTGRES_DB: legalbot
+      POSTGRES_USER: conrado
+      POSTGRES_PASSWORD: legalbot
+      DJANGO_SETTINGS_MODULE: legalbot.settings
+
+networks:
+  default:
+    external:
+      name: myapp-network
