@@ -40,4 +40,4 @@ jobs:
       run: docker build -t myapp-tests -f Dockerfile.tests .
 
     - name: Run tests in Docker container
-      run: docker run --network host myapp-tests python -m pytest
+      run: docker run --network host -e DJANGO_SETTINGS_MODULE=legalbot.settings myapp-tests python -m pytest
