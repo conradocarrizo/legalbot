@@ -1,0 +1,58 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: legalbot
+          POSTGRES_USER: conrado
+          POSTGRES_PASSWORD: legalbot
+        ports:
+          - "5432:5432"
+        networks:
+          - myapp-network
+
+      django:
+        build: .
+        command: python -m pytest
+        volumes:
+          - .:/app
+        depends_on:
+          - db
+        environment:
+          POSTGRES_DB: legalbot
+          POSTGRES_USER: conrado
+          POSTGRES_PASSWORD: legalbot
+          DJANGO_SETTINGS_MODULE: legalbot.settings
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Install pre-commit
+      run: pip install pre-commit
+
+    - name: Run pre-commit hooks
+      run: pre-commit run --all-files
+
+    - name: Run tests in Docker container
+      run: docker-compose -f docker-compose.test.yml up
