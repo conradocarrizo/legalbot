@@ -1,0 +1,43 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: legalbot
+          POSTGRES_USER: conrado
+          POSTGRES_PASSWORD: legalbot
+        ports:
+          - "5432:5432"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run pre-commit hooks
+      run: pre-commit run --all-files
+
+    - name: Build the test image
+      run: docker build -t myapp-tests -f Dockerfile.tests .
+
+    - name: Run tests in Docker container
+      run: docker run --network host myapp-tests python -m pytest
