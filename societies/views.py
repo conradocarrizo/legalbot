@@ -114,7 +114,7 @@ class SocietyViewSet(viewsets.ModelViewSet):
                     "member_societies": member_societies,
                 },
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Person.DoesNotExist:
             return Response(
                 data={"persona no encontrada"}, status=status.HTTP_404_NOT_FOUND

@@ -48,8 +48,6 @@ class CreateSocietyAdminSerializer(serializers.Serializer):
     faculties = serializers.ListField(child=serializers.CharField(max_length=50))
 
     def create(self, validated_data):
-        print(validated_data["code"])
-
         rut_data = validated_data.pop("rut")
         address = validated_data.pop("address")
 
